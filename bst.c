@@ -1,44 +1,44 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct node { int data; struct node *left, *right; } *root = NULL;
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
 
-struct node* createNode(int data) {
-    struct node* newNode = (struct node*)malloc(sizeof(struct node));
-    newNode->data = data; newNode->left = newNode->right = NULL;
-    return newNode;
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->left = node->right = NULL;
+    return node;
 }
 
-void insert(int data) {
-    struct node **temp = &root;
-    while (*temp) temp = (data > (*temp)->data) ? &(*temp)->right : &(*temp)->left;
-    *temp = createNode(data);
+struct Node* insert(struct Node* node, int data) {
+    if (node == NULL) return newNode(data);
+    if (data < node->data) node->left = insert(node->left, data);
+    else node->right = insert(node->right, data);
+    return node;
 }
 
-int search(int key) {
-    struct node* temp = root;
-    while (temp) {
-        if (key == temp->data) return 1;
-        temp = (key > temp->data) ? temp->right : temp->left;
+void inorder(struct Node* root) {
+    if (root) {
+        inorder(root->left);
+        printf("%d ", root->data);
+        inorder(root->right);
     }
-    return 0;
-}
-
-void inorder(struct node* root) {
-    if (!root) return;
-    inorder(root->left); printf("%d ", root->data); inorder(root->right);
 }
 
 int main() {
-    int choice, data;
-    while (1) {
-        printf("\n1. Insert\n2. Search\n3. Inorder\n4. Exit\nChoice: ");
-        scanf("%d", &choice);
-        if (choice == 4) break;
-        if (choice == 1) { printf("Data: "); scanf("%d", &data); insert(data); }
-        else if (choice == 2) { printf("Data: "); scanf("%d", &data); printf(search(data) ? "Found\n" : "Not Found\n"); }
-        else if (choice == 3) { inorder(root); printf("\n"); }
-        else printf("Invalid Choice\n");
-    }
+    struct Node* root = NULL;
+    root = insert(root, 50);
+    insert(root, 30);
+    insert(root, 20);
+    insert(root, 40);
+    insert(root, 70);
+    insert(root, 60);
+    insert(root, 80);
+
+    printf("Inorder traversal: ");
+    inorder(root);
     return 0;
 }
